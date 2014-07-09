@@ -51,7 +51,17 @@ A _model_ is defined by group of [attributes]() that describe a particular _thin
 
 For example, in this project I want to create a `User` model that consists of a single attribute:  `name`.  The _model_ will ultimately consist of other attributes (e.g. email address, title, phone number, etc), however, for the purpose of understanding how _models_ work and interact I'll limit the attributes to simply the user's name. 
 
-I'll open up my editor and create a file named `User.js` and save it in the `sailsPeople/api/models/` folder.  In Sails, I can define a **User** model as a javascript object:
+The Sails command-line tool ships with a few simple [generators]() for quickly generating common code files.  This keeps me from having to manually create new files and put together the boilerplate code every time I want to add something new to my app.
+
+So to define my first _model_ named **User**, I'll open the command line and enter:
+
+```sh
+ $ sails generate api user
+ ```
+
+This will create the _model_ in a file named `User.js` in the `sailsPeople/api/models/` folder and a _controller_ in a file named `UserController.js` in the `sailsPeople/api/controllers/` folder.  
+
+When I open `sailsPeople/api/models/User.js`, an empty model has been created for me.  My user _model_ is going to consist of a single attribute `name` which I'll add now.
 
 ```javascript
 {
@@ -67,16 +77,15 @@ When I start my app using `sails lift`, Sails will look for models in `/sailsPeo
 
 I'm going to do something similar with my second model called **Profile**.  In my app, a **Profile** contains attributes that describe a particular **User**.
 
-To create this second model I'll cheat a little bit.  The Sails command-line tool ships with a few simple [generators]() for quickly generating common code files.  This keeps me from having to manually create new files and put together the boilerplate code every time I want to add something new to my app.
-
 To define my **Profile** _model_, I'll open the command line and enter:
 
  ```sh
  $ sails generate api profile
  ```
- 
-When I open `sailsPeople/api/models/Profile.js`, an empty model has been created for me.  For now, I just want to track two pieces of information for my _Profile_ -- `aboutMe` which not surprisingly will be a description of a _User_ and `gender`.   
 
+Again, a _model_ and _controller_ file was generated for me.
+ 
+For now, I just want to track two pieces of information for my _Profile_ -- `aboutMe` which not surprisingly will be a description of a _User_ and `gender`.  I'll open `Profile.js` in the `/sailsPeople/api/models` folder and add the two attributes:
 
 ```javascript
 attributes: {
