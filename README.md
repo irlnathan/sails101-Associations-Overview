@@ -64,13 +64,15 @@ This will create the _model_ in a file named `User.js` in the `sailsPeople/api/m
 When I open `sailsPeople/api/models/User.js`, an empty model has been created for me.  My user _model_ is going to consist of a single attribute `name` which I'll add now.
 
 ```javascript
-{
+module.exports = {
+
   attributes: {
+    
     name: {
       type: 'string'
     }
   }
-}
+};
 ```
 
 When I start my app using `sails lift`, Sails will look for models in `/sailsPeople/api/models`.  Finding my newly created `User.js` file, Sails will connect to the database where my _User_ data is stored and provide an inteface for me to interact with it.  By default, Sails stores data in a temporary file on my hard disk, but I can change this to MySQL, PostgreSQL, MongoDB, Redis, or CouchDB at any time down the road.
@@ -83,19 +85,24 @@ To define my **Profile** _model_, I'll open the command line and enter:
  $ sails generate api profile
  ```
 
-Again, a _model_ and _controller_ file was generated for me.
+Again, a _model_ and _controller_ file were generated.
  
 For now, I just want to track two pieces of information for my _Profile_ -- `aboutMe` which not surprisingly will be a description of a _User_ and `gender`.  I'll open `Profile.js` in the `/sailsPeople/api/models` folder and add the two attributes:
 
 ```javascript
-attributes: {
-  aboutMe: {
-    type: 'string'
-  },
-  gender: {
-    type: 'string'
+module.exports = {
+
+  attributes: {
+    
+    aboutMe: {
+      type: 'string'
+    },
+
+    gender: {
+      type: 'string'
+    }
   }
-}
+};
 ```
 
 At this point, I have defined and configured two _models_:
@@ -219,7 +226,7 @@ So now I have two _Records_ of my User _model_:
   </tr>
 </table>
 
-Next I'll create two Profiles `/profile/create?aboutMe=This is stuff about me&gender=male`.
+Next I'll create two Profiles.  The `aboutMe` is going to be large so instead of putting a bunch of text in the URL of the browser, I'm going to use a chrome extension called [Postman](https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm?hl=en).  I highly recommend it as it makes sending requests to RESTful apis really easy.  From within _Postman_ I sent a `post` request to `http://localhost:1337/profile` with two parameters -- `aboutMe` and `gender` with the following values below:
 
 <table>
 <tr>
@@ -296,9 +303,14 @@ Accessing stored Profiles from the browser is just as easy via [`http://localhos
 
 With our _models_ defined, _attributes_ configured, and some _records_ created, it's time to address associations.
 
-<!--                       -->
-<!-- Start of Associations -->
-<!--                       -->
+<!-- 
+  ____  _             _            __      _                       _       _   _                 
+ / ___|| |_ __ _ _ __| |_    ___  / _|    / \   ___ ___  ___   ___(_) __ _| |_(_) ___  _ __  ___ 
+ \___ \| __/ _` | '__| __|  / _ \| |_    / _ \ / __/ __|/ _ \ / __| |/ _` | __| |/ _ \| '_ \/ __|
+  ___) | || (_| | |  | |_  | (_) |  _|  / ___ \\__ \__ \ (_) | (__| | (_| | |_| | (_) | | | \__ \
+ |____/ \__\__,_|_|   \__|  \___/|_|   /_/   \_\___/___/\___/ \___|_|\__,_|\__|_|\___/|_| |_|___/
+                                                                                                 
+ -->
 
 ##Why do I use _Associations_?
 **Associations** provide a way to relate models so that finding, creating, updating, and destroying _Records_ requires less programming.  _Associations_ require some initial configuration, however, once configured, allow me to find and change records easily.
@@ -345,6 +357,11 @@ Now, at the `sails> ` prompt, I'll enter:
 
 ```javascript
 sails> User.update({id: 1}).set({profile: 1}).exec(function(err, user){console.log(user); });
+```
+**Note:** I could have written this command without the `.set()` method with the same effect:
+
+```javascript
+sails> User.update({id: 1}, {profile: 1}).exec(function(err, user){console.log(user); });
 ```
 
 That's hard to read so let's look at the same code formatted in a more readable style:
@@ -401,8 +418,6 @@ There are several methods I'll be using to **populate** (i.e. look up), **add**,
  </tr>
 </table>
 
-
-<!-- I got to about here and had to stop ~mike -->
 
 The first of these methods is `.populate` which I can use to have sails return all _Records_ of an association.  
 
@@ -495,17 +510,31 @@ Profile.create({aboutMe: "I'm an American author and game designer known for my 
 
 I could use the same strategy I used in the previous example, however, because the User _model_ is aware of the Profile _model_ through its association, I can also use an additional, less verbose, approach.
 
->**Note:** I previously created the following Profile _Record_ for this example:
+First, I'll set-up the existing Profile _Record_ will use for this example:
 
-```json
-{ 
-  "aboutMe": "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.",
-  "gender": "female",
-  "id": "3",
-  "createdAt": "Sat Apr 26 2014 22:22:56 GMT-0500 (CDT)",
-  "updatedAt": "Sat Apr 26 2014 22:22:56 GMT-0500 (CDT)"" 
-}
+I'll open the [Sails console]() by running the following command in my terminal:
+
+```sh
+$ sails console
 ```
+
+Now, at the `sails> ` prompt, I'll enter:
+
+
+```javascript
+sails> Profile.create(aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"}).exec(function(err, profile){console.log(profile); });
+```
+
+Here is the same code but in a more readable format:
+
+```javascript
+Profile.create(aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"})
+  .exec(function(err, profile) {
+    console.log(profile); 
+  });
+```
+
+Next, I'll add `Aimee Mann` and associate it with her **Profile**.
 
 
 First I'll open the [Sails console]() by running the following command in my terminal:
@@ -518,14 +547,14 @@ Now, at the `sails> ` prompt, I'll enter:
 
 
 ```javascript
-sails> User.create({name: 'Aimee Mann', profile: 3}).exec(function(err, user { console.log(user); });
+sails> User.create({name: 'Aimee Mann', profile: 3}).exec(function(err, user) { console.log(user); });
 ```
 
 Here is the same code but in a more readable format:
 
 ```javascript
 User.create({name: 'Aimee Mann', profile: 3})
-  .exec(function(err, user {
+  .exec(function(err, user) {
     console.log(user);
   });
 ```
@@ -535,12 +564,71 @@ User.create({name: 'Aimee Mann', profile: 3})
 I create the **new** _User_ using the `.create` method and pass in Aimee Mann's name along with the _primary key_ of the Profile I want to associate with Aimee (e.g. profile: 3).
 
 
+###Creating a **new** _User_ and new _Profile_ and associating it with the new _User_
+>**Task:** Create a new _User_ _Orville Wright_ and his _Profile_ adding the association to his _Profile_.
+
+I'll open the [Sails console]() by running the following command in my terminal:
+
+```sh
+$ sails console
+```
+
+Now, at the `sails> ` prompt, I'll enter:
+
+
+```javascript
+sails> Profile.create({aboutMe: "Along with my brother Wilbur, we created the first self-propelled heavier than air craft which initially flew on December 17, 1903.", gender: "male"}).exec(function(err, profile) { User.create({name: "Orville Wright"}).exec(function(err, user){ console.log("user.profile: ", user.profile);  console.log("profile.id: ", profile.id); user.profile = profile.id;  user.save(function(err){ if (err) {console.log(err); }});  });  });
+```
+
+Here is the same code but in a more readable format:
+
+```javascript
+Profile.create({
+    aboutMe: "Along with my brother Wilbur, we created the first self-propelled heavier than air craft which initially flew on December 17, 1903.",
+    gender: "male"
+}).exec(function (err, profile) {
+    User.create({
+        name: "Orville Wright"
+    }).exec(function (err, user) {
+        console.log("user.profile: ", user.profile);
+        console.log("profile.id: ", profile.id);
+        user.profile = profile.id;
+        user.save(function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    });
+});
+```
+
+I could also have written this from the User _model_ perspective:
+
+```javascript
+sails> User.create({name: "Orville Wright", profile: {aboutMe: "Along with my brother Wilbur, we created the first self-propelled heavier than air craft which initially flew on December 17, 1903.", gender: "male" } }).exec(function(err, user) { console.log(user) });
+```
+
+Here is the same code but in a more readable format:
+
+```javascript
+User.create({
+    name: "Orville Wright",
+    profile: {
+        aboutMe: "Along with my brother Wilbur, we created the first self-propelled heavier than air craft which initially flew on December 17, 1903.",
+        gender: "male"
+    }
+}).exec(function (err, user) {
+    console.log(user)
+});
+```
+
+
 ### Removing the association between a _User_ and a _Profile_: a _one-way associations_
 >**Task:** Remove the association between _Neal Stephenson_ and his _Profile_.
 
 <img src="http://i.imgur.com/4MqMR3v.jpg?1" />
 
-I can remove Neal Stephenson's association with its Profile by assigning `null` to Neal's Profile _attribute_.
+I can remove Neal Stephenson's association with his Profile by assigning `null` to Neal's Profile _attribute_.
 
 First I'll open the [Sails console]() by running the following command in my terminal:
 
@@ -560,9 +648,14 @@ sails> User.update(2).set({profile: null}).exec(console.log);
 1. First I pass the _primary key_ of Neal Stephenson (2) to the `.update()` method.
 2. Next, I'll set the Profile _association attribute_ to null.
 
-<!--                       -->
-<!--  Two-way Associations -->
-<!--                       -->
+<!-- 
+  _____                                             _                       _       _   _                 
+ |_   _|_      _____      __      ____ _ _   _     / \   ___ ___  ___   ___(_) __ _| |_(_) ___  _ __  ___ 
+   | | \ \ /\ / / _ \ ____\ \ /\ / / _` | | | |   / _ \ / __/ __|/ _ \ / __| |/ _` | __| |/ _ \| '_ \/ __|
+   | |  \ V  V / (_) |_____\ V  V / (_| | |_| |  / ___ \\__ \__ \ (_) | (__| | (_| | |_| | (_) | | | \__ \
+   |_|   \_/\_/ \___/       \_/\_/ \__,_|\__, | /_/   \_\___/___/\___/ \___|_|\__,_|\__|_|\___/|_| |_|___/
+                                         |___/                                                            
+ -->
 
 ##Two-way Associations: Configuring, Finding, Creating, Updating and Removing 
 
@@ -575,10 +668,11 @@ So far, I've been using a one-way association between the User and Profile _mode
 
 <img src="http://i.imgur.com/8VPMYjA.jpg" />
 
-Similar to how I configured the User _model_, I can configure the Profile _model_ with a new _**association** attribute_ called **Owner**.  The User _**association** attribute_ represents a one-way relationship between the Profile _model_ and the User _model_.  That is, Nikola Tesla's Profile _record_ is now "aware" of Nikola.
+Similar to how I configured the User _model_, I can configure the Profile _model_ with a new _**association** attribute_ called **Owner**.  The User _**association** attribute_ represents a one-way relationship between the Profile _model_ and the User _model_.  That is, I can make a Profile _record_ "aware" of of a User _record_ simply by updating this new **Owner** attribute.
 
 <img src ="http://i.imgur.com/AJkVupC.jpg" />
 
+Updating and finding _records_ in a _two-way_ association
 
 ### Finding associated _Records_: using "populate" in a _two-way association_
 >**Task:** Find the Profile _record_ of _Neal Stephenson_ using the **Profile** _association attribute_ and find the _Neal Stephenson_ using the **Owner** _association attribute_.
@@ -682,7 +776,7 @@ User.update({id: 5}, {profile: {id: 5, owner: null}})
 >**Note:** It is very important that when passing a nested object in the `.update` method that I specify a _primary key_ of what I want to update.  If I don't pass the _primary key_, the `.update` method will create a new object.
 
 ###Validating Two-way Associations
-Even though I've set-up a two-way association between the _User_ and _Profile_ as well as the _Profile_ and _User_, there is nothing that will prevent Charles Ponzi's Profile _record_ from being associated with both Charles Ponzi and Nikola Tesla.  Given Ponzi's past, I don't think Nikola Tesla would appreciate that.  But as with most things there's a way to prevent that behavior.
+Even though I've set-up a two-way association between the _User_ and _Profile_ as well as the _Profile_ and _User_, there is nothing that will prevent Charles Ponzi's Profile _record_ from being associated with both Charles Ponzi and Nikola Tesla.  Given Ponzi's past, I don't think Nikola Tesla would appreciate that.  But as with most things in Sails there's an easy way to prevent that behavior.
 
 Because Associations are _attributes_ Sails validations apply.
 
@@ -703,10 +797,14 @@ By adding the **unique** _validation attribute_, only one Profile _record_ may b
   raw: "error: duplicate key value violates unique constraint "user_profile_key""
 }
 ```
-
-<!--                           -->
-<!--  One to Many Associations -->
-<!--                           -->
+<!-- 
+   ___                   _                                               _                         
+  / _ \ _ __   ___      | |_ ___        _ __ ___   __ _ _ __  _   _     / \   ___ ___  ___   ___   
+ | | | | '_ \ / _ \_____| __/ _ \ _____| '_ ` _ \ / _` | '_ \| | | |   / _ \ / __/ __|/ _ \ / __|  
+ | |_| | | | |  __/_____| || (_) |_____| | | | | | (_| | | | | |_| |  / ___ \\__ \__ \ (_) | (__ _ 
+  \___/|_| |_|\___|      \__\___/      |_| |_| |_|\__,_|_| |_|\__, | /_/   \_\___/___/\___/ \___(_)
+                                                              |___/                                
+ -->
 
 ##One to Many Associations: Configuring, Finding, Creating, Updating and Removing 
 
@@ -889,9 +987,14 @@ User.findOne(1)
 2. Next, using dot notation (user.leads) I'll remove _Guy Montag_ as a lead of Nikola Tesla by passing in Guy's  _primary key_ (3) as an argument to the `.remove()` method.
 3. Finally, I'll save the User -- _Nikola Tesla_ using the `.save()` method.
 
-<!--                            -->
-<!--  Many to Many Associations -->
-<!--                            -->
+<!--  
+  __  __                         _                                               _                         
+ |  \/  | __ _ _ __  _   _      | |_ ___        _ __ ___   __ _ _ __  _   _     / \   ___ ___  ___   ___   
+ | |\/| |/ _` | '_ \| | | |_____| __/ _ \ _____| '_ ` _ \ / _` | '_ \| | | |   / _ \ / __/ __|/ _ \ / __|  
+ | |  | | (_| | | | | |_| |_____| || (_) |_____| | | | | | (_| | | | | |_| |  / ___ \\__ \__ \ (_) | (__ _ 
+ |_|  |_|\__,_|_| |_|\__, |      \__\___/      |_| |_| |_|\__,_|_| |_|\__, | /_/   \_\___/___/\___/ \___(_)
+                     |___/                                            |___/                                
+-->
 
 ##Many to Many Associations: Configuring, Finding, Creating, Updating and Removing 
 
