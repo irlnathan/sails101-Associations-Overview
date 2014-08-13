@@ -522,13 +522,13 @@ Now, at the `sails> ` prompt, I'll enter:
 
 
 ```javascript
-sails> Profile.create(aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"}).exec(function(err, profile){console.log(profile); });
+sails> Profile.create({aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"}).exec(function(err, profile){console.log(profile); });
 ```
 
 Here is the same code but in a more readable format:
 
 ```javascript
-Profile.create(aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"})
+Profile.create({aboutMe: "I'm an American rock singer-songwriter, guitarist and bassist. In the 1980s, I sang in the Boston new wave band 'Til Tuesday until I left to begin a solo career in the early 1990s.", gender: "female"})
   .exec(function(err, profile) {
     console.log(profile); 
   });
@@ -696,13 +696,13 @@ Now, at the `sails> ` prompt, I'll enter:
 
 
 ```javascript
-sails> User.create({name: 'Boris Karloff', profile: {aboutMe: 'I am an actor born in 1887 best known for my portrayal of Frankenstein's monster and the voice of the animated classic 'The Grinch that stole Christimas', gender: 'male'}}).exec(function(err, user) {Profile.update(user.profile).set({owner: user.id}).exec(console.log); });
+sails> User.create({name: 'Boris Karloff', profile: {aboutMe: "I am an actor born in 1887 best known for my portrayal of Frankenstein's monster and the voice of the animated classic 'The Grinch that stole Christimas", gender: 'male'}}).exec(function(err, user) {Profile.update(user.profile).set({owner: user.id}).exec(console.log); });
 ```
 
 Here is the same code but in a more readable format:
 
 ```javascript
-User.create({name: 'Boris Karloff', profile: {aboutMe: 'I am an actor born in 1887 best known for my portrayal of Frankenstein's monster and the voice of the animated classic 'The Grinch that stole Christimas." , gender: 'male'}})
+User.create({name: 'Boris Karloff', profile: {aboutMe: "I am an actor born in 1887 best known for my portrayal of Frankenstein's monster and the voice of the animated classic 'The Grinch that stole Christimas." , gender: 'male'}})
   .exec(function(err, user) {
     Profile.update(user.profile)
       .set({owner: user.id})
@@ -853,7 +853,7 @@ attributes: {
     unique: true
   },
   leads: {
-    collection: ‘lead’
+    collection: 'lead'
   }  
 }
 ```
